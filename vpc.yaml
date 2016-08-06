@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  connection: local
+  roles:
+    - ssdc_env_common
+    - ssdc_ec2_vpc

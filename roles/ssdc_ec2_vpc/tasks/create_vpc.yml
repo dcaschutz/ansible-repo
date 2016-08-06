@@ -1,0 +1,23 @@
+---
+   
+- set_fact: vpc_blocks="{{vpc_facts.vpcs|map(attribute='cidr_block')|list }}"
+
+- name: find open cidr block for vpc
+  set_fact: free_block="{{ lookup('find_free_net', vpc_blockspace, vpc_blocksize, vpc_blocks) }}"
+  
+- debug: var=free_block
+
+- name: create ec2 vpc
+  ec2_vpc:
+    state: present
+    wait: yes
+    cidr_block: "{{ free_block }}"
+    # profile: boto profile (!)
+    # region:
+    resource_tags:
+      Name: "vpc-{{ lookup('env', 'SWEETSPOT_ENVIRONMENT') }}-0"
+      Environment: "{{ lookup('env', 'SWEETSPOT_ENVIRONMENT') }}"
+      # Anything not already there or changed will create a new vpc.
+      # Argh!
+      Creator: "username:{{ lookup('env', 'USER') }}"
+      CreationTime: "{{ ansible_date_time.iso8601 }}"

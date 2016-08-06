@@ -1,0 +1,4 @@
+---
+vpc_blockspace: 10.128.0.0/9
+# size of vpc blocks to assign, e.g. 10.128.16.0/20
+vpc_blocksize: 20

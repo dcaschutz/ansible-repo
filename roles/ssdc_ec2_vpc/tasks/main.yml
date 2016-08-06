@@ -1,0 +1,14 @@
+---
+- name: locate existing ec2 vpc
+  ec2_vpc_net_facts:
+  register: vpc_facts
+
+- name: find existing vpc
+  find_vpcs:
+     vpc_facts: "{{ vpc_facts }}"
+     vpc_tags:
+       Name: "{{ vpc_name }}"
+  register: existing_vpcs
+
+- include: create_vpc.yml
+  when: ( existing_vpcs.vpcs|length == 0 )

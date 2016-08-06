@@ -1,0 +1,7 @@
+---
+# tasks file for ssdc_env_common
+
+- include: install_local_prereqs.yml
+
+- include_vars: "{{ role_path }}/../../infrastructure/default.yaml"
+- include_vars: ../../../infrastructure/environments/{{ lookup('env', 'SWEETSPOT_ENVIRONMENT' ) }}.yaml

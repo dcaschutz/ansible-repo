@@ -1,0 +1,3 @@
+---
+# defaults file for ssdc_ec2_vpc
+vpc_name: "vpc-{{ lookup('env', 'SWEETSPOT_ENVIRONMENT') }}-0"
