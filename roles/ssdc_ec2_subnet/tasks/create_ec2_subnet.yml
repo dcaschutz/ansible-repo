@@ -1,0 +1,21 @@
+---
+- name: find open cidr block for vpc
+  set_fact: free_block="{{ lookup('find_free_net', environment_vpc['cidr_block'], subnet['size'] , existing_vpc_subnet_blocks) }}"
+
+- debug: var=free_block
+- debug: msg="{{ environment_name|get_subnet_name(subnet.name) }}"
+
+#- fail:
+
+# Create missing ones.
+- ec2_vpc_subnet:
+    state: present
+    vpc_id: "{{ environment_vpc.id }}"
+    cidr: "{{ free_block }}"
+    az: "{{ subnet['availability_zone'] }}"
+    resource_tags:
+      Name: "{{ environment_name|get_subnet_name(subnet.name) }}"
+      Environment: "{{ environment_name }}"
+      # Anything not already there or changed will create a new subnet.
+      Creator: "{{ creator_info }}"
+      CreationTime: "{{ start_time }}"

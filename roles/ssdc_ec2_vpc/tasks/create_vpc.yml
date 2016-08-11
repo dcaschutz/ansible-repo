@@ -19,5 +19,5 @@
       Environment: "{{ lookup('env', 'SWEETSPOT_ENVIRONMENT') }}"
       # Anything not already there or changed will create a new vpc.
       # Argh!
-      Creator: "username:{{ lookup('env', 'USER') }}"
-      CreationTime: "{{ ansible_date_time.iso8601 }}"
+      Creator: "{{ creator_info }}"
+      CreationTime: "{{ start_time }}"

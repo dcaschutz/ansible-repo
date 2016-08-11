@@ -1,7 +1,31 @@
 ---
 # tasks file for ssdc_env_common
+- set_fact:
+    environment_name: "{{ lookup('env', 'SWEETSPOT_ENVIRONMENT' ) }}"
+
+- command: id -F
+  register: id_contents
+  changed_when: false
+- set_fact: user_full_name="{{ id_contents.stdout|replace('\n', '')}}"
+- set_fact: user_id="{{ lookup('env', 'USER') }}"
+- set_fact: creator_info="username:{{ user_id }}, full name:{{ user_full_name }}"
+
+# Using the shell lets us skip needing to gather facts in cases where they are otherwise needed.
+# - set_fact: start_time="{{ ansible_date_time.iso8601 }}"
+- command: "date -u +'%Y-%m-%dT%H:%M:%SZ'"
+  register: date_contents
+  changed_when: false
+- set_fact: start_time="{{ date_contents.stdout|replace('\n', '')}}"
 
 - include: install_local_prereqs.yml
 
-- include_vars: "{{ role_path }}/../../infrastructure/default.yaml"
-- include_vars: ../../../infrastructure/environments/{{ lookup('env', 'SWEETSPOT_ENVIRONMENT' ) }}.yaml
+# The environment specific variables need to be loaded first in order to find our environment_type
+- name: "include environment specific file"
+  include_vars: "{{ role_path }}../../../../infrastructure/environments/{{ environment_name }}.yaml"
+- name: "include default infrastructure file"
+  include_vars: "{{ role_path }}/../../infrastructure/default.yaml"
+- name: "include environment type '{{ environment_type }}' infrastructure file"
+  include_vars: "{{ role_path }}/../../infrastructure/{{ environment_type }}.yaml"
+# The environment specific variables are reloaded because they override other variables.
+- name: "re-include environment specific file (for variable overrides)"
+  include_vars: "{{ role_path }}../../../../infrastructure/environments/{{ environment_name }}.yaml"

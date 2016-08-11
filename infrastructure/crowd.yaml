@@ -1,0 +1,8 @@
+---
+environment_subnets:
+  - name: db_subnet1
+    size: 24
+    availability_zone: us-east-1a
+  - name: db_subnet2
+    size: 24
+    availability_zone: us-east-1c

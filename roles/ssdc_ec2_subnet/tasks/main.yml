@@ -1,0 +1,20 @@
+---
+- name: find all subnets in vpc for this environment
+  ec2_vpc_subnet_facts:
+    filters:
+      vpc-id: "{{ environment_vpc.id }}"
+#        tag:Name: "{{ item }}"
+  register: existing_environment_subnets
+
+#- debug: var=existing_environment_subnets
+#- fail:
+
+
+- name: get list of missing subnets.
+  set_fact: missing_environment_subnets="{{ existing_environment_subnets.subnets|find_missing_subnets(environment_subnets, environment_name) }}"
+
+- debug: var=missing_environment_subnets
+#- fail:
+
+- include: create_ec2_subnets.yml
+  when: "{{ missing_environment_subnets|length > 0 }}"

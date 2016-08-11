@@ -1,0 +1,13 @@
+---
+## Don't assume that all subnets in the vpc are part of this environment.
+- name: find all subnets in vpc
+  ec2_vpc_subnet_facts:
+    filters:
+      vpc-id: "{{ environment_vpc.id }}"
+  register: existing_vpc_subnets
+
+- set_fact: existing_vpc_subnet_blocks="{{ existing_vpc_subnets.subnets|map(attribute='cidr_block')|list }}"
+
+- name: call create_ec2_subnet on each missing subnet
+  include: create_ec2_subnet.yml subnet="{{ item }}"
+  with_items: "{{ missing_environment_subnets }}"

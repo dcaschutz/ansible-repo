@@ -5,3 +5,4 @@
   roles:
     - ssdc_env_common
     - ssdc_ec2_vpc
+    - ssdc_ec2_subnet

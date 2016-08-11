@@ -12,3 +12,8 @@
 
 - include: create_vpc.yml
   when: ( existing_vpcs.vpcs|length == 0 )
+
+- set_fact: environment_vpc={{ existing_vpcs.vpcs[0] }}
+
+#- debug: var=environment_vpc
+#- fail:
